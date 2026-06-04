@@ -23,11 +23,8 @@ export async function buildPersonalAgentProfileContext(
   if (!user) {
     return null;
   }
-  const owner = auth.getNonNullableWorkspace();
-  const metadata = await user.getMetadata(
-    PERSONAL_AGENT_PROFILE_METADATA_KEY,
-    owner.id
-  );
+
+  const metadata = await user.getMetadata(PERSONAL_AGENT_PROFILE_METADATA_KEY);
   const content = metadata?.value?.trim();
   if (!content) {
     return null;

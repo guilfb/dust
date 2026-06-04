@@ -53,7 +53,7 @@ export function ProfilePage() {
           title="Agent Behavior"
           description="Describe how you want agents to behave. This profile is private and applies to all your agents and conversations."
         />
-        <PersonalAgentProfileSection owner={owner} />
+        <PersonalAgentProfileSection />
 
         {isPendingInvitationsLoading ? (
           <div className="flex justify-center py-4">

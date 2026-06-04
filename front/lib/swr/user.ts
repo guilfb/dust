@@ -205,15 +205,13 @@ export function usePatchUser() {
 }
 
 export function usePersonalAgentProfile({
-  owner,
   disabled,
 }: {
-  owner: LightWorkspaceType;
   disabled?: boolean;
-}) {
+} = {}) {
   const { metadata, isMetadataLoading, mutateMetadata } = useUserMetadata(
     PERSONAL_AGENT_PROFILE_METADATA_KEY,
-    { workspaceId: owner.sId, disabled }
+    { disabled }
   );
 
   return {
@@ -223,18 +221,14 @@ export function usePersonalAgentProfile({
   };
 }
 
-export function useUpdatePersonalAgentProfile({
-  owner,
-}: {
-  owner: LightWorkspaceType;
-}) {
+export function useUpdatePersonalAgentProfile() {
   const sendNotification = useSendNotification();
-  const { mutateProfile } = usePersonalAgentProfile({ owner });
+  const { mutateProfile } = usePersonalAgentProfile();
 
   const updatePersonalAgentProfile = async (value: string) => {
     const capped = value.slice(0, PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
     const res = await clientFetch(
-      `/api/user/metadata/${encodeURIComponent(PERSONAL_AGENT_PROFILE_METADATA_KEY)}?workspaceId=${encodeURIComponent(owner.sId)}`,
+      `/api/user/metadata/${encodeURIComponent(PERSONAL_AGENT_PROFILE_METADATA_KEY)}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

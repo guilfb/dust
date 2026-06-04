@@ -44,8 +44,8 @@ function firstText(content: { type: string; text?: string }[]): string {
 }
 
 describe("personal_agent_profile update_personal_agent_profile tool", () => {
-  it("persists the profile for the current user and workspace", async () => {
-    const { authenticator, workspace } = await createResourceTest({
+  it("persists the profile for the current user, workspace-agnostic", async () => {
+    const { authenticator } = await createResourceTest({
       role: "admin",
     });
     const user = authenticator.user();
@@ -61,14 +61,13 @@ describe("personal_agent_profile update_personal_agent_profile tool", () => {
     expect(result.isOk()).toBe(true);
 
     const metadata = await user.getMetadata(
-      PERSONAL_AGENT_PROFILE_METADATA_KEY,
-      workspace.id
+      PERSONAL_AGENT_PROFILE_METADATA_KEY
     );
     expect(metadata?.value).toBe("Be concise.");
   });
 
   it("caps the persisted content at PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS", async () => {
-    const { authenticator, workspace } = await createResourceTest({
+    const { authenticator } = await createResourceTest({
       role: "admin",
     });
     const user = authenticator.user();
@@ -87,8 +86,7 @@ describe("personal_agent_profile update_personal_agent_profile tool", () => {
     expect(result.isOk()).toBe(true);
 
     const metadata = await user.getMetadata(
-      PERSONAL_AGENT_PROFILE_METADATA_KEY,
-      workspace.id
+      PERSONAL_AGENT_PROFILE_METADATA_KEY
     );
     expect(metadata?.value?.length).toBe(
       PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS
@@ -112,7 +110,7 @@ describe("personal_agent_profile update_personal_agent_profile tool", () => {
 
 describe("personal_agent_profile retrieve tool", () => {
   it("returns the profile previously set for the current user", async () => {
-    const { authenticator, workspace } = await createResourceTest({
+    const { authenticator } = await createResourceTest({
       role: "admin",
     });
     const user = authenticator.user();
@@ -122,8 +120,7 @@ describe("personal_agent_profile retrieve tool", () => {
 
     await user.setMetadata(
       PERSONAL_AGENT_PROFILE_METADATA_KEY,
-      "Always reply in French.",
-      workspace.id
+      "Always reply in French."
     );
 
     const result = await getRetrieveTool().handler(
@@ -147,7 +144,7 @@ describe("personal_agent_profile retrieve tool", () => {
 
     expect(result.isOk()).toBe(true);
     if (result.isOk()) {
-      expect(firstText(result.value)).toBe("(no agent profile set)");
+      expect(firstText(result.value)).toBe("(no personal agent profile set)");
     }
   });
 

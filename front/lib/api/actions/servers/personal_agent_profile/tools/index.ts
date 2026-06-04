@@ -23,10 +23,8 @@ const handlers: ToolHandlers<typeof PERSONAL_AGENT_PROFILE_TOOLS_METADATA> = {
       );
     }
 
-    const owner = auth.getNonNullableWorkspace();
     const metadata = await user.getMetadata(
-      PERSONAL_AGENT_PROFILE_METADATA_KEY,
-      owner.id
+      PERSONAL_AGENT_PROFILE_METADATA_KEY
     );
     const content = metadata?.value?.trim();
 
@@ -51,13 +49,9 @@ const handlers: ToolHandlers<typeof PERSONAL_AGENT_PROFILE_TOOLS_METADATA> = {
       );
     }
 
-    const owner = auth.getNonNullableWorkspace();
     const capped = content.slice(0, PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
-    await user.setMetadata(
-      PERSONAL_AGENT_PROFILE_METADATA_KEY,
-      capped,
-      owner.id
-    );
+
+    await user.setMetadata(PERSONAL_AGENT_PROFILE_METADATA_KEY, capped);
 
     return new Ok([
       {

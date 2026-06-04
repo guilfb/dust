@@ -14,7 +14,7 @@ describe("buildPersonalAgentProfileContext", () => {
   });
 
   it("returns null when the profile is only whitespace", async () => {
-    const { authenticator, workspace } = await createResourceTest({
+    const { authenticator } = await createResourceTest({
       role: "admin",
     });
     const user = authenticator.user();
@@ -22,17 +22,13 @@ describe("buildPersonalAgentProfileContext", () => {
       throw new Error("Expected an authenticated user.");
     }
 
-    await user.setMetadata(
-      PERSONAL_AGENT_PROFILE_METADATA_KEY,
-      "   ",
-      workspace.id
-    );
+    await user.setMetadata(PERSONAL_AGENT_PROFILE_METADATA_KEY, "   ");
 
     expect(await buildPersonalAgentProfileContext(authenticator)).toBeNull();
   });
 
   it("wraps the profile content in a <personal_agent_profile> block with the guard preamble", async () => {
-    const { authenticator, workspace } = await createResourceTest({
+    const { authenticator } = await createResourceTest({
       role: "admin",
     });
     const user = authenticator.user();
@@ -42,8 +38,7 @@ describe("buildPersonalAgentProfileContext", () => {
 
     await user.setMetadata(
       PERSONAL_AGENT_PROFILE_METADATA_KEY,
-      "Always reply in French.",
-      workspace.id
+      "Always reply in French."
     );
 
     const context = await buildPersonalAgentProfileContext(authenticator);
@@ -66,7 +61,7 @@ describe("buildPersonalAgentProfileContext", () => {
   });
 
   it("truncates content exceeding PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS", async () => {
-    const { authenticator, workspace } = await createResourceTest({
+    const { authenticator } = await createResourceTest({
       role: "admin",
     });
     const user = authenticator.user();
@@ -77,11 +72,8 @@ describe("buildPersonalAgentProfileContext", () => {
     const longContent = "x".repeat(
       PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS + 1000
     );
-    await user.setMetadata(
-      PERSONAL_AGENT_PROFILE_METADATA_KEY,
-      longContent,
-      workspace.id
-    );
+
+    await user.setMetadata(PERSONAL_AGENT_PROFILE_METADATA_KEY, longContent);
 
     const context = await buildPersonalAgentProfileContext(authenticator);
     if (!context) {
@@ -92,5 +84,33 @@ describe("buildPersonalAgentProfileContext", () => {
     // and excluded from the limit. Count the "x" run to isolate the content.
     const contentLength = (context.match(/x/g) ?? []).length;
     expect(contentLength).toBe(PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
+  });
+
+  it("is workspace-agnostic: a profile stored without a workspaceId is read back regardless of the authenticator's workspace", async () => {
+    const { authenticator, workspace } = await createResourceTest({
+      role: "admin",
+    });
+    const user = authenticator.user();
+    if (!user) {
+      throw new Error("Expected an authenticated user.");
+    }
+
+    // A profile written workspace-scoped must NOT be picked up
+    // by the user-scoped read.
+    await user.setMetadata(
+      PERSONAL_AGENT_PROFILE_METADATA_KEY,
+      "Workspace-scoped profile.",
+      workspace.id
+    );
+    expect(await buildPersonalAgentProfileContext(authenticator)).toBeNull();
+
+    // The user-scoped profile (null workspaceId) is the one that applies.
+    await user.setMetadata(
+      PERSONAL_AGENT_PROFILE_METADATA_KEY,
+      "User-scoped profile."
+    );
+    const context = await buildPersonalAgentProfileContext(authenticator);
+    expect(context).toContain("User-scoped profile.");
+    expect(context).not.toContain("Workspace-scoped profile.");
   });
 });

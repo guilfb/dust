@@ -566,15 +566,9 @@ function ToolsSection({ owner }: { owner: WorkspaceType }) {
 
 // ─── Profile ─────────────────────────────────────────────────────────────────
 
-interface ProfileSectionProps {
-  owner: WorkspaceType;
-}
-
-function ProfileSection({ owner }: ProfileSectionProps) {
-  const { profile, isProfileLoading } = usePersonalAgentProfile({ owner });
-  const { updatePersonalAgentProfile } = useUpdatePersonalAgentProfile({
-    owner,
-  });
+function ProfileSection() {
+  const { profile, isProfileLoading } = usePersonalAgentProfile();
+  const { updatePersonalAgentProfile } = useUpdatePersonalAgentProfile();
   const [localProfile, setLocalProfile] = useState(profile);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -722,7 +716,7 @@ export function UserSettingsPopover({
               <NotificationsSection owner={owner} />
             )}
             {activeSection === "tools" && <ToolsSection owner={owner} />}
-            {activeSection === "profile" && <ProfileSection owner={owner} />}
+            {activeSection === "profile" && <ProfileSection />}
           </div>
         </div>
       </DialogContent>
