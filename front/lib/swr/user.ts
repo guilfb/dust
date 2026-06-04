@@ -11,6 +11,7 @@ import {
   useFetcher,
   useSWRWithDefaults,
 } from "@app/lib/swr/swr";
+import { setUserMetadataFromClient } from "@app/lib/user";
 import type { EmailProviderType } from "@app/lib/utils/email_provider_detection";
 import type { GetUserResponseBody } from "@app/pages/api/user";
 import type { GetUserMetadataResponseBody } from "@app/pages/api/user/metadata/[key]";
@@ -20,6 +21,7 @@ import type { GetSlackNotificationResponseBody } from "@app/pages/api/w/[wId]/me
 import type { GetWorkspaceUsageStatusResponseBody } from "@app/pages/api/w/[wId]/usage-status";
 import type { FavoritePlatform } from "@app/types/favorite_platforms";
 import type { JobType } from "@app/types/job_type";
+import { normalizeError } from "@app/types/shared/utils/error_utils";
 import type { LightWorkspaceType } from "@app/types/user";
 import { useMemo } from "react";
 import type { Fetcher, SWRConfiguration } from "swr";
@@ -227,28 +229,22 @@ export function useUpdatePersonalAgentProfile() {
 
   const updatePersonalAgentProfile = async (value: string) => {
     const capped = value.slice(0, PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
-    const res = await clientFetch(
-      `/api/user/metadata/${encodeURIComponent(PERSONAL_AGENT_PROFILE_METADATA_KEY)}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value: capped }),
-      }
-    );
-
-    if (res.ok) {
+    try {
+      await setUserMetadataFromClient({
+        key: PERSONAL_AGENT_PROFILE_METADATA_KEY,
+        value: capped,
+      });
       sendNotification({
         type: "success",
         title: "Personal Agent Profile saved",
         description: "Your personal agent profile has been saved.",
       });
       await mutateProfile();
-    } else {
-      const errorData = await getErrorFromResponse(res);
+    } catch (err) {
       sendNotification({
         type: "error",
         title: "Error saving profile",
-        description: `Error: ${errorData.message}`,
+        description: `Error: ${normalizeError(err).message}`,
       });
     }
   };
