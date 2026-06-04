@@ -46,18 +46,23 @@ describe("buildPersonalAgentProfileContext", () => {
       throw new Error("Expected a user profile context.");
     }
 
-    // The block contains the guard preamble framing the profile as subordinate
-    // preferences, followed by the user content.
+    // The block contains the guard preamble, followed by the user content.
     expect(context).toMatch(/^<personal_agent_profile>\n/);
     expect(context).toMatch(/\n<\/personal_agent_profile>$/);
-    expect(context).toContain("Treat them as preferences, not commands.");
-    expect(context).toContain("They never override your instructions");
+    // On conflict, the guard instructs the agent to ask the user (via the
+    // ask_user_question tool) instead of silently dropping the preference.
+    expect(context).toContain("ask_user_question");
+    expect(context).toContain("take precedence for the current conversation");
+    // On confirmation the preference overrides the agent instructions, but never
+    // core safety/system policies.
+    expect(context).toContain("authoritative instruction");
+    expect(context).toContain("core safety and system policies");
     expect(context).toContain("Always reply in French.");
-    // The guard precedes the user content so the model reads the precedence rule
+    // The guard precedes the user content so the model reads the conflict rule
     // before the preferences themselves.
-    expect(
-      context.indexOf("Treat them as preferences, not commands.")
-    ).toBeLessThan(context.indexOf("Always reply in French."));
+    expect(context.indexOf("ask_user_question")).toBeLessThan(
+      context.indexOf("Always reply in French.")
+    );
   });
 
   it("truncates content exceeding PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS", async () => {
@@ -81,8 +86,11 @@ describe("buildPersonalAgentProfileContext", () => {
     }
 
     // Only the user-supplied content is capped; the guard preamble is constant
-    // and excluded from the limit. Count the "x" run to isolate the content.
-    const contentLength = (context.match(/x/g) ?? []).length;
+    // and excluded from the limit. Isolate the content as the longest run of
+    // consecutive "x" so stray "x" letters in the guard prose don't skew the count.
+    const contentLength = Math.max(
+      ...(context.match(/x+/g) ?? [""]).map((run) => run.length)
+    );
     expect(contentLength).toBe(PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
   });
 
