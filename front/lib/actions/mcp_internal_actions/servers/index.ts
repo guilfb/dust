@@ -6,7 +6,7 @@ import {
   isServerSideMCPServerConfiguration,
 } from "@app/lib/actions/types/guards";
 import { default as agentMemoryServer } from "@app/lib/api/actions/servers/agent_memory";
-import { default as agentProfileServer } from "@app/lib/api/actions/servers/agent_profile";
+import { default as personalAgentProfileServer } from "@app/lib/api/actions/servers/personal_agent_profile";
 import { default as agentRouterServer } from "@app/lib/api/actions/servers/agent_router";
 import { default as agentSidekickAgentStateServer } from "@app/lib/api/actions/servers/agent_sidekick_agent_state";
 import { default as agentSidekickContextServer } from "@app/lib/api/actions/servers/agent_sidekick_context";
@@ -214,8 +214,8 @@ export async function getInternalMCPServer(
       return slackBotServer(auth, mcpServerId, agentLoopContext);
     case "agent_memory":
       return agentMemoryServer(auth, agentLoopContext);
-    case "agent_profile":
-      return agentProfileServer(auth, agentLoopContext);
+    case "personal_agent_profile":
+      return personalAgentProfileServer(auth, agentLoopContext);
     case "confluence":
       return confluenceServer(auth, agentLoopContext);
     case "outlook":

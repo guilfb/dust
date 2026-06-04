@@ -9,9 +9,9 @@ import {
 } from "@app/lib/swr/swr";
 import type { EmailProviderType } from "@app/lib/utils/email_provider_detection";
 import {
-  AGENT_PROFILE_METADATA_KEY,
-  MAX_AGENT_PROFILE_LENGTH_CHARS,
-} from "@app/lib/api/assistant/user_profile";
+  PERSONAL_AGENT_PROFILE_METADATA_KEY,
+  PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS,
+} from "@app/lib/api/assistant/personal_agent_profile";
 import type { GetUserResponseBody } from "@app/pages/api/user";
 import type { GetUserMetadataResponseBody } from "@app/pages/api/user/metadata/[key]";
 import type { GetUserApprovalsResponseBody } from "@app/pages/api/w/[wId]/me/approvals";
@@ -204,7 +204,7 @@ export function usePatchUser() {
   return { patchUser };
 }
 
-export function useAgentProfile({
+export function usePersonalAgentProfile({
   owner,
   disabled,
 }: {
@@ -212,7 +212,7 @@ export function useAgentProfile({
   disabled?: boolean;
 }) {
   const { metadata, isMetadataLoading, mutateMetadata } = useUserMetadata(
-    AGENT_PROFILE_METADATA_KEY,
+    PERSONAL_AGENT_PROFILE_METADATA_KEY,
     { workspaceId: owner.sId, disabled }
   );
 
@@ -223,14 +223,14 @@ export function useAgentProfile({
   };
 }
 
-export function useUpdateAgentProfile({ owner }: { owner: LightWorkspaceType }) {
+export function useUpdatePersonalAgentProfile({ owner }: { owner: LightWorkspaceType }) {
   const sendNotification = useSendNotification();
-  const { mutateProfile } = useAgentProfile({ owner });
+  const { mutateProfile } = usePersonalAgentProfile({ owner });
 
-  const updateProfile = async (value: string) => {
-    const capped = value.slice(0, MAX_AGENT_PROFILE_LENGTH_CHARS);
+  const updatePersonalAgentProfile = async (value: string) => {
+    const capped = value.slice(0, PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
     const res = await clientFetch(
-      `/api/user/metadata/${encodeURIComponent(AGENT_PROFILE_METADATA_KEY)}?workspaceId=${encodeURIComponent(owner.sId)}`,
+      `/api/user/metadata/${encodeURIComponent(PERSONAL_AGENT_PROFILE_METADATA_KEY)}?workspaceId=${encodeURIComponent(owner.sId)}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -241,8 +241,8 @@ export function useUpdateAgentProfile({ owner }: { owner: LightWorkspaceType }) 
     if (res.ok) {
       sendNotification({
         type: "success",
-        title: "Profile saved",
-        description: "Your agent profile has been saved.",
+        title: "Personal Agent Profile saved",
+        description: "Your personal agent profile has been saved.",
       });
       await mutateProfile();
     } else {
@@ -255,7 +255,7 @@ export function useUpdateAgentProfile({ owner }: { owner: LightWorkspaceType }) 
     }
   };
 
-  return { updateProfile };
+  return { updatePersonalAgentProfile };
 }
 
 export function usePendingInvitations({

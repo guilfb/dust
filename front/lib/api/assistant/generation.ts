@@ -412,7 +412,7 @@ export function constructPromptMultiActions(
     memoriesContext,
     toolsetsContext,
     userContext,
-    userProfileContext,
+    personalAgentProfileContext,
     workspaceContext,
     projectContext,
     isNewFileExplorer = false,
@@ -436,7 +436,7 @@ export function constructPromptMultiActions(
     memoriesContext?: string;
     toolsetsContext?: string;
     userContext?: string;
-    userProfileContext?: string;
+    personalAgentProfileContext?: string;
     workspaceContext?: string;
     projectContext?: string;
     isNewFileExplorer?: boolean;
@@ -523,7 +523,7 @@ export function constructPromptMultiActions(
       { role: "context" as const, content: branchContextSection },
       { role: "context" as const, content: memoriesContext ?? "" },
       { role: "context" as const, content: userContext ?? "" },
-      { role: "context" as const, content: userProfileContext ?? "" },
+      { role: "context" as const, content: personalAgentProfileContext ?? "" },
       { role: "context" as const, content: projectContext ?? "" },
     ].filter((s) => s.content.trim() !== "");
 
@@ -549,7 +549,7 @@ export function constructPromptMultiActions(
     { role: "context" as const, content: toolsetsContext ?? "" },
     { role: "context" as const, content: memoriesContext ?? "" },
     { role: "context" as const, content: userContext ?? "" },
-    { role: "context" as const, content: userProfileContext ?? "" },
+    { role: "context" as const, content: personalAgentProfileContext ?? "" },
     { role: "context" as const, content: workspaceContext ?? "" },
     { role: "context" as const, content: projectContext ?? "" },
   ].filter((s) => s.content.trim() !== "");

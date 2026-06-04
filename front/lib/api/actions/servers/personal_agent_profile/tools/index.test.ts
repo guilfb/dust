@@ -1,12 +1,12 @@
 import {
-  RETRIEVE_AGENT_PROFILE_TOOL_NAME,
-  UPDATE_AGENT_PROFILE_TOOL_NAME,
-} from "@app/lib/api/actions/servers/agent_profile/metadata";
-import { TOOLS } from "@app/lib/api/actions/servers/agent_profile/tools";
+  RETRIEVE_PERSONAL_AGENT_PROFILE_TOOL_NAME,
+  UPDATE_PERSONAL_AGENT_PROFILE_TOOL_NAME,
+} from "@app/lib/api/actions/servers/personal_agent_profile/metadata";
+import { TOOLS } from "@app/lib/api/actions/servers/personal_agent_profile/tools";
 import {
-  AGENT_PROFILE_METADATA_KEY,
-  MAX_AGENT_PROFILE_LENGTH_CHARS,
-} from "@app/lib/api/assistant/user_profile";
+  PERSONAL_AGENT_PROFILE_METADATA_KEY,
+  PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS,
+} from "@app/lib/api/assistant/personal_agent_profile";
 import type { Authenticator as AuthenticatorType } from "@app/lib/auth";
 import { Authenticator } from "@app/lib/auth";
 import { createResourceTest } from "@app/tests/utils/generic_resource_tests";
@@ -28,11 +28,11 @@ function getTool(name: string) {
 }
 
 function getUpdateTool() {
-  return getTool(UPDATE_AGENT_PROFILE_TOOL_NAME);
+  return getTool(UPDATE_PERSONAL_AGENT_PROFILE_TOOL_NAME);
 }
 
 function getRetrieveTool() {
-  return getTool(RETRIEVE_AGENT_PROFILE_TOOL_NAME);
+  return getTool(RETRIEVE_PERSONAL_AGENT_PROFILE_TOOL_NAME);
 }
 
 function firstText(content: { type: string; text?: string }[]): string {
@@ -43,7 +43,7 @@ function firstText(content: { type: string; text?: string }[]): string {
   return item.text;
 }
 
-describe("agent_profile update_agent_profile tool", () => {
+describe("personal_agent_profile update_personal_agent_profile tool", () => {
   it("persists the profile for the current user and workspace", async () => {
     const { authenticator, workspace } = await createResourceTest({
       role: "admin",
@@ -61,13 +61,13 @@ describe("agent_profile update_agent_profile tool", () => {
     expect(result.isOk()).toBe(true);
 
     const metadata = await user.getMetadata(
-      AGENT_PROFILE_METADATA_KEY,
+      PERSONAL_AGENT_PROFILE_METADATA_KEY,
       workspace.id
     );
     expect(metadata?.value).toBe("Be concise.");
   });
 
-  it("caps the persisted content at MAX_AGENT_PROFILE_LENGTH_CHARS", async () => {
+  it("caps the persisted content at PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS", async () => {
     const { authenticator, workspace } = await createResourceTest({
       role: "admin",
     });
@@ -76,7 +76,7 @@ describe("agent_profile update_agent_profile tool", () => {
       throw new Error("Expected an authenticated user.");
     }
 
-    const longContent = "x".repeat(MAX_AGENT_PROFILE_LENGTH_CHARS + 1000);
+    const longContent = "x".repeat(PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS + 1000);
     const result = await getUpdateTool().handler(
       { content: longContent },
       makeExtra(authenticator)
@@ -85,10 +85,10 @@ describe("agent_profile update_agent_profile tool", () => {
     expect(result.isOk()).toBe(true);
 
     const metadata = await user.getMetadata(
-      AGENT_PROFILE_METADATA_KEY,
+      PERSONAL_AGENT_PROFILE_METADATA_KEY,
       workspace.id
     );
-    expect(metadata?.value?.length).toBe(MAX_AGENT_PROFILE_LENGTH_CHARS);
+    expect(metadata?.value?.length).toBe(PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
   });
 
   it("returns an error when there is no authenticated user", async () => {
@@ -106,7 +106,7 @@ describe("agent_profile update_agent_profile tool", () => {
   });
 });
 
-describe("agent_profile retrieve tool", () => {
+describe("personal_agent_profile retrieve tool", () => {
   it("returns the profile previously set for the current user", async () => {
     const { authenticator, workspace } = await createResourceTest({
       role: "admin",
@@ -117,7 +117,7 @@ describe("agent_profile retrieve tool", () => {
     }
 
     await user.setMetadata(
-      AGENT_PROFILE_METADATA_KEY,
+      PERSONAL_AGENT_PROFILE_METADATA_KEY,
       "Always reply in French.",
       workspace.id
     );

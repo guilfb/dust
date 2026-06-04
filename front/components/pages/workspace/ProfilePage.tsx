@@ -1,6 +1,6 @@
 import { AgentSidebarMenu } from "@app/components/assistant/conversation/SidebarMenu";
 import { AccountSettings } from "@app/components/me/AccountSettings";
-import { AgentProfileSection } from "@app/components/me/AgentProfileSection";
+import { PersonalAgentProfileSection } from "@app/components/me/PersonalAgentProfileSection";
 import { PendingInvitationsTable } from "@app/components/me/PendingInvitationsTable";
 import { ProfileTriggersTab } from "@app/components/me/ProfileTriggersTab";
 import { UserToolsTable } from "@app/components/me/UserToolsTable";
@@ -53,7 +53,7 @@ export function ProfilePage() {
           title="Agent Behavior"
           description="Describe how you want agents to behave. This profile is private and applies to all your agents and conversations."
         />
-        <AgentProfileSection owner={owner} />
+        <PersonalAgentProfileSection owner={owner} />
 
         {isPendingInvitationsLoading ? (
           <div className="flex justify-center py-4">

@@ -6,11 +6,11 @@ import { useTheme } from "@app/components/sparkle/ThemeContext";
 import { useFileUploaderService } from "@app/hooks/useFileUploaderService";
 import { useIsMac } from "@app/hooks/useKeyboardShortcutLabel";
 import { isSubmitMessageKey } from "@app/lib/keymaps";
-import { MAX_AGENT_PROFILE_LENGTH_CHARS } from "@app/lib/api/assistant/user_profile";
+import { PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS } from "@app/lib/api/assistant/personal_agent_profile";
 import {
-  useAgentProfile,
+  usePersonalAgentProfile,
   usePatchUser,
-  useUpdateAgentProfile,
+  useUpdatePersonalAgentProfile,
   useUser,
 } from "@app/lib/swr/user";
 import type { WorkspaceType } from "@app/types/user";
@@ -571,8 +571,8 @@ interface ProfileSectionProps {
 }
 
 function ProfileSection({ owner }: ProfileSectionProps) {
-  const { profile, isProfileLoading } = useAgentProfile({ owner });
-  const { updateProfile } = useUpdateAgentProfile({ owner });
+  const { profile, isProfileLoading } = usePersonalAgentProfile({ owner });
+  const { updatePersonalAgentProfile } = useUpdatePersonalAgentProfile({ owner });
   const [localProfile, setLocalProfile] = useState(profile);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -584,7 +584,7 @@ function ProfileSection({ owner }: ProfileSectionProps) {
 
   const handleSave = async () => {
     setIsSaving(true);
-    await updateProfile(localProfile);
+    await updatePersonalAgentProfile(localProfile);
     setIsSaving(false);
   };
 
@@ -612,7 +612,7 @@ function ProfileSection({ owner }: ProfileSectionProps) {
           placeholder="E.g. Always reply in French, use bullet points, keep answers concise."
           value={localProfile}
           onChange={(e) => setLocalProfile(e.target.value)}
-          maxLength={MAX_AGENT_PROFILE_LENGTH_CHARS}
+          maxLength={PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS}
           rows={10}
           resize="vertical"
         />

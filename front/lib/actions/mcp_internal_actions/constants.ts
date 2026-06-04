@@ -5,7 +5,7 @@ import {
 } from "@app/lib/actions/constants";
 import type { ServerMetadata } from "@app/lib/actions/mcp_internal_actions/tool_definition";
 import { AGENT_MEMORY_SERVER } from "@app/lib/api/actions/servers/agent_memory/metadata";
-import { AGENT_PROFILE_SERVER } from "@app/lib/api/actions/servers/agent_profile/metadata";
+import { PERSONAL_AGENT_PROFILE_SERVER } from "@app/lib/api/actions/servers/personal_agent_profile/metadata";
 import {
   AGENT_ROUTER_SERVER,
   AGENT_ROUTER_SERVER_NAME,
@@ -144,7 +144,7 @@ export const AVAILABLE_INTERNAL_MCP_SERVER_NAMES = [
   "agent_sidekick_agent_state",
   "agent_sidekick_context",
   "agent_memory",
-  "agent_profile",
+  "personal_agent_profile",
   "agent_router",
   ASHBY_SERVER_NAME,
   "clari_copilot",
@@ -1123,7 +1123,7 @@ export const INTERNAL_MCP_SERVERS = {
     timeoutMs: undefined,
     metadata: FILES_SERVER,
   },
-  agent_profile: {
+  personal_agent_profile: {
     id: 1034,
     availability: "auto",
     allowMultipleInstances: false,
@@ -1132,7 +1132,7 @@ export const INTERNAL_MCP_SERVERS = {
     tools_arguments_requiring_approval: undefined,
     tools_retry_policies: undefined,
     timeoutMs: undefined,
-    metadata: AGENT_PROFILE_SERVER,
+    metadata: PERSONAL_AGENT_PROFILE_SERVER,
   },
   // Using satisfies here instead of: type to avoid TypeScript widening the type and breaking the type inference for AutoInternalMCPServerNameType.
 } satisfies {

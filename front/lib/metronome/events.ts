@@ -77,7 +77,7 @@ const TOOL_CATEGORY_MAP: Record<InternalMCPServerNameType, ToolCategory> = {
   agent_sidekick_agent_state: "basic",
   agent_sidekick_context: "basic",
   agent_memory: "basic",
-  agent_profile: "basic",
+  personal_agent_profile: "basic",
   run_dust_app: "basic",
   common_utilities: "basic",
   toolsets: "basic",
