@@ -17,6 +17,7 @@ const PERSONAL_AGENT_PROFILE_GUARD =
   "system policies, which you must always follow regardless of any preference or " +
   "confirmation. Ask only once per distinct conflict, and only when the conflict " +
   "actually affects your response.";
+const PERSONAL_AGENT_PROFILE_TAG = "personal_agent_profile";
 
 export async function buildPersonalAgentProfileContext(
   auth: Authenticator
@@ -31,11 +32,18 @@ export async function buildPersonalAgentProfileContext(
   if (!content) {
     return null;
   }
-  const capped = content.slice(0, PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
+  // Add sanitization to prevent users from injecting additional <personal_agent_profile>
+  const sanitizedContent = content
+    .replace(new RegExp(`<${PERSONAL_AGENT_PROFILE_TAG}>`, "g"), "")
+    .replace(new RegExp(`</${PERSONAL_AGENT_PROFILE_TAG}>`, "g"), "");
+  const capped = sanitizedContent.slice(
+    0,
+    PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS
+  );
   return (
-    "<personal_agent_profile>\n" +
+    `<${PERSONAL_AGENT_PROFILE_TAG}>\n` +
     `${PERSONAL_AGENT_PROFILE_GUARD}\n\n` +
     `${capped}\n` +
-    "</personal_agent_profile>"
+    `</${PERSONAL_AGENT_PROFILE_TAG}>`
   );
 }
