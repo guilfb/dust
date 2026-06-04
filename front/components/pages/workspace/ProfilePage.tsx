@@ -50,7 +50,7 @@ export function ProfilePage() {
         <Separator />
 
         <Page.SectionHeader
-          title="Agent Behavior"
+          title="Personal Agent Profile"
           description="Describe how you want agents to behave. This profile is private and applies to all your agents and conversations."
         />
         <PersonalAgentProfileSection />

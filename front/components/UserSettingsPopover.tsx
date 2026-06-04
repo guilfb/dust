@@ -586,8 +586,8 @@ function ProfileSection() {
 
   return (
     <SectionContent
-      title="Profile"
-      description="Describe yourself to help agents personalise their responses. This profile is private and applies to all your conversations."
+      title="Personal Agent Profile"
+      description="Describe how you want agents to behave. This profile is private and applies to all your agents and conversations."
       footer={
         <Button
           label="Save"

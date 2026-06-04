@@ -213,7 +213,7 @@ export function usePersonalAgentProfile({
 } = {}) {
   const { metadata, isMetadataLoading, mutateMetadata } = useUserMetadata(
     PERSONAL_AGENT_PROFILE_METADATA_KEY,
-    { disabled }
+    { disabled, revalidateOnMount: true }
   );
 
   return {
