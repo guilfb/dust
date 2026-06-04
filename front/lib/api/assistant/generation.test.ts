@@ -596,6 +596,85 @@ describe("constructPromptMultiActions - system prompt stability", () => {
     expect(memoriesSection).toBeDefined();
     expect(memoriesSection?.content).toContain("Some memory");
   });
+
+  it("should place user_profile in ephemeral tier for dust-like agents", () => {
+    const dustConfig = {
+      ...agentConfig1,
+      sId: GLOBAL_AGENTS_SID.DUST,
+      scope: "global" as const,
+    };
+
+    const userProfileContext =
+      "<user_profile>\nAlways reply in French.\n</user_profile>";
+
+    const params = {
+      userMessage: userMessage1,
+      agentConfiguration: dustConfig,
+      model: modelConfig,
+      hasAvailableActions: true,
+      agentsList: null,
+      systemSkills: [],
+      enabledSkills: [],
+      equippedSkills: [],
+      userProfileContext,
+    };
+
+    const sections = constructPromptMultiActions(authenticator1, params);
+    const { instructions, sharedContext, ephemeralContext } =
+      normalizePrompt(sections);
+
+    expect(instructions[0]?.content).not.toContain("<user_profile>");
+    expect(
+      sharedContext.some((s) => s.content.includes("<user_profile>"))
+    ).toBe(false);
+
+    const profileSection = ephemeralContext.find((s) =>
+      s.content.includes("<user_profile>")
+    );
+    expect(profileSection).toBeDefined();
+    expect(profileSection?.content).toContain("Always reply in French.");
+  });
+
+  it("should place user_profile in flat context for custom agents", () => {
+    const userProfileContext =
+      "<user_profile>\nBe concise.\n</user_profile>";
+
+    const params = {
+      userMessage: userMessage1,
+      agentConfiguration: agentConfig1,
+      model: modelConfig,
+      hasAvailableActions: true,
+      agentsList: null,
+      systemSkills: [],
+      enabledSkills: [],
+      equippedSkills: [],
+      userProfileContext,
+    };
+
+    const sections = constructPromptMultiActions(authenticator1, params);
+    const text = systemPromptToText(sections);
+
+    expect(text).toContain("<user_profile>");
+    expect(text).toContain("Be concise.");
+  });
+
+  it("should not include user_profile block when userProfileContext is absent", () => {
+    const params = {
+      userMessage: userMessage1,
+      agentConfiguration: agentConfig1,
+      model: modelConfig,
+      hasAvailableActions: true,
+      agentsList: null,
+      systemSkills: [],
+      enabledSkills: [],
+      equippedSkills: [],
+    };
+
+    const sections = constructPromptMultiActions(authenticator1, params);
+    const text = systemPromptToText(sections);
+
+    expect(text).not.toContain("<user_profile>");
+  });
 });
 
 describe("globalAgentInjectsMemory", () => {

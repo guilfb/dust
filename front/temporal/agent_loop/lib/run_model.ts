@@ -26,6 +26,7 @@ import {
   buildUserContext,
   buildWorkspaceContext,
 } from "@app/lib/api/assistant/global_agents/sidekick_context";
+import { buildUserProfileContext } from "@app/lib/api/assistant/user_profile";
 import { getJITServers } from "@app/lib/api/assistant/jit_actions";
 import { listAttachments } from "@app/lib/api/assistant/jit_utils";
 import { getCompletionDuration } from "@app/lib/api/assistant/messages";
@@ -366,6 +367,11 @@ export async function runModel(
     userContext = (await buildUserContext(auth)) ?? undefined;
   }
 
+  let userProfileContext: string | undefined;
+  if (auth.user()) {
+    userProfileContext = (await buildUserProfileContext(auth)) ?? undefined;
+  }
+
   let workspaceContext: string | undefined;
   if (globalAgentInjectsWorkspaceContext(agentConfiguration.sId)) {
     workspaceContext = await buildWorkspaceContext(auth);
@@ -400,6 +406,7 @@ export async function runModel(
     memoriesContext,
     toolsetsContext,
     userContext,
+    userProfileContext,
     workspaceContext,
     projectContext,
     isNewFileExplorer,

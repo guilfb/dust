@@ -6,7 +6,13 @@ import { useTheme } from "@app/components/sparkle/ThemeContext";
 import { useFileUploaderService } from "@app/hooks/useFileUploaderService";
 import { useIsMac } from "@app/hooks/useKeyboardShortcutLabel";
 import { isSubmitMessageKey } from "@app/lib/keymaps";
-import { usePatchUser, useUser } from "@app/lib/swr/user";
+import { MAX_AGENT_PROFILE_LENGTH_CHARS } from "@app/lib/api/assistant/user_profile";
+import {
+  useAgentProfile,
+  usePatchUser,
+  useUpdateAgentProfile,
+  useUser,
+} from "@app/lib/swr/user";
 import type { WorkspaceType } from "@app/types/user";
 import { ANONYMOUS_USER_IMAGE_URL } from "@app/types/user";
 import {
@@ -38,6 +44,7 @@ import {
   SparklesIcon,
   Spinner,
   SunIcon,
+  TextArea,
   Tabs,
   TabsContent,
   TabsList,
@@ -56,7 +63,8 @@ type SettingsSection =
   | "usage"
   | "customization"
   | "notifications"
-  | "tools";
+  | "tools"
+  | "profile";
 
 interface UserSettingsPopoverProps {
   open: boolean;
@@ -556,6 +564,63 @@ function ToolsSection({ owner }: { owner: WorkspaceType }) {
   );
 }
 
+// ─── Profile ─────────────────────────────────────────────────────────────────
+
+interface ProfileSectionProps {
+  owner: WorkspaceType;
+}
+
+function ProfileSection({ owner }: ProfileSectionProps) {
+  const { profile, isProfileLoading } = useAgentProfile({ owner });
+  const { updateProfile } = useUpdateAgentProfile({ owner });
+  const [localProfile, setLocalProfile] = useState(profile);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setLocalProfile(profile);
+  }, [profile]);
+
+  const isDirty = localProfile !== profile;
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    await updateProfile(localProfile);
+    setIsSaving(false);
+  };
+
+  return (
+    <SectionContent
+      title="Profile"
+      description="Describe yourself to help agents personalise their responses. This profile is private and applies to all your conversations."
+      footer={
+        <Button
+          label="Save"
+          variant="primary"
+          type="button"
+          onClick={handleSave}
+          disabled={!isDirty || isSaving}
+          isLoading={isSaving}
+        />
+      }
+    >
+      {isProfileLoading ? (
+        <div className="flex justify-center py-4">
+          <Spinner size="sm" />
+        </div>
+      ) : (
+        <TextArea
+          placeholder="E.g. Always reply in French, use bullet points, keep answers concise."
+          value={localProfile}
+          onChange={(e) => setLocalProfile(e.target.value)}
+          maxLength={MAX_AGENT_PROFILE_LENGTH_CHARS}
+          rows={10}
+          resize="vertical"
+        />
+      )}
+    </SectionContent>
+  );
+}
+
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: Array<{
@@ -568,6 +633,7 @@ const NAV_ITEMS: Array<{
   { section: "customization", icon: Cog6ToothIcon, label: "Customization" },
   { section: "notifications", icon: BellIcon, label: "Notifications" },
   { section: "tools", icon: ToolsIcon, label: "Tools and Triggers" },
+  { section: "profile", icon: SparklesIcon, label: "Profile" },
 ];
 
 export function UserSettingsPopover({
@@ -654,6 +720,7 @@ export function UserSettingsPopover({
               <NotificationsSection owner={owner} />
             )}
             {activeSection === "tools" && <ToolsSection owner={owner} />}
+            {activeSection === "profile" && <ProfileSection owner={owner} />}
           </div>
         </div>
       </DialogContent>

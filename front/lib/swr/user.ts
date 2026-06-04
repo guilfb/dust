@@ -8,6 +8,10 @@ import {
   useSWRWithDefaults,
 } from "@app/lib/swr/swr";
 import type { EmailProviderType } from "@app/lib/utils/email_provider_detection";
+import {
+  AGENT_PROFILE_METADATA_KEY,
+  MAX_AGENT_PROFILE_LENGTH_CHARS,
+} from "@app/lib/api/assistant/user_profile";
 import type { GetUserResponseBody } from "@app/pages/api/user";
 import type { GetUserMetadataResponseBody } from "@app/pages/api/user/metadata/[key]";
 import type { GetUserApprovalsResponseBody } from "@app/pages/api/w/[wId]/me/approvals";
@@ -198,6 +202,60 @@ export function usePatchUser() {
   };
 
   return { patchUser };
+}
+
+export function useAgentProfile({
+  owner,
+  disabled,
+}: {
+  owner: LightWorkspaceType;
+  disabled?: boolean;
+}) {
+  const { metadata, isMetadataLoading, mutateMetadata } = useUserMetadata(
+    AGENT_PROFILE_METADATA_KEY,
+    { workspaceId: owner.sId, disabled }
+  );
+
+  return {
+    profile: metadata?.value ?? "",
+    isProfileLoading: disabled ? false : isMetadataLoading,
+    mutateProfile: mutateMetadata,
+  };
+}
+
+export function useUpdateAgentProfile({ owner }: { owner: LightWorkspaceType }) {
+  const sendNotification = useSendNotification();
+  const { mutateProfile } = useAgentProfile({ owner });
+
+  const updateProfile = async (value: string) => {
+    const capped = value.slice(0, MAX_AGENT_PROFILE_LENGTH_CHARS);
+    const res = await clientFetch(
+      `/api/user/metadata/${encodeURIComponent(AGENT_PROFILE_METADATA_KEY)}?workspaceId=${encodeURIComponent(owner.sId)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: capped }),
+      }
+    );
+
+    if (res.ok) {
+      sendNotification({
+        type: "success",
+        title: "Profile saved",
+        description: "Your agent profile has been saved.",
+      });
+      await mutateProfile();
+    } else {
+      const errorData = await getErrorFromResponse(res);
+      sendNotification({
+        type: "error",
+        title: "Error saving profile",
+        description: `Error: ${errorData.message}`,
+      });
+    }
+  };
+
+  return { updateProfile };
 }
 
 export function usePendingInvitations({
