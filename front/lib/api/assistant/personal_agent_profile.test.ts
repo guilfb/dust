@@ -1,7 +1,7 @@
 import {
-  PERSONAL_AGENT_PROFILE_METADATA_KEY,
   buildPersonalAgentProfileContext,
   PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS,
+  PERSONAL_AGENT_PROFILE_METADATA_KEY,
 } from "@app/lib/api/assistant/personal_agent_profile";
 import { createResourceTest } from "@app/tests/utils/generic_resource_tests";
 import { describe, expect, it } from "vitest";
@@ -22,7 +22,11 @@ describe("buildPersonalAgentProfileContext", () => {
       throw new Error("Expected an authenticated user.");
     }
 
-    await user.setMetadata(PERSONAL_AGENT_PROFILE_METADATA_KEY, "   ", workspace.id);
+    await user.setMetadata(
+      PERSONAL_AGENT_PROFILE_METADATA_KEY,
+      "   ",
+      workspace.id
+    );
 
     expect(await buildPersonalAgentProfileContext(authenticator)).toBeNull();
   });
@@ -56,7 +60,9 @@ describe("buildPersonalAgentProfileContext", () => {
       throw new Error("Expected an authenticated user.");
     }
 
-    const longContent = "x".repeat(PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS + 1000);
+    const longContent = "x".repeat(
+      PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS + 1000
+    );
     await user.setMetadata(
       PERSONAL_AGENT_PROFILE_METADATA_KEY,
       longContent,

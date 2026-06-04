@@ -1,7 +1,7 @@
 import { AgentSidebarMenu } from "@app/components/assistant/conversation/SidebarMenu";
 import { AccountSettings } from "@app/components/me/AccountSettings";
-import { PersonalAgentProfileSection } from "@app/components/me/PersonalAgentProfileSection";
 import { PendingInvitationsTable } from "@app/components/me/PendingInvitationsTable";
+import { PersonalAgentProfileSection } from "@app/components/me/PersonalAgentProfileSection";
 import { ProfileTriggersTab } from "@app/components/me/ProfileTriggersTab";
 import { UserToolsTable } from "@app/components/me/UserToolsTable";
 import {

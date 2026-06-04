@@ -5,11 +5,11 @@ import { FormProvider } from "@app/components/sparkle/FormProvider";
 import { useTheme } from "@app/components/sparkle/ThemeContext";
 import { useFileUploaderService } from "@app/hooks/useFileUploaderService";
 import { useIsMac } from "@app/hooks/useKeyboardShortcutLabel";
-import { isSubmitMessageKey } from "@app/lib/keymaps";
 import { PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS } from "@app/lib/api/assistant/personal_agent_profile";
+import { isSubmitMessageKey } from "@app/lib/keymaps";
 import {
-  usePersonalAgentProfile,
   usePatchUser,
+  usePersonalAgentProfile,
   useUpdatePersonalAgentProfile,
   useUser,
 } from "@app/lib/swr/user";
@@ -44,11 +44,11 @@ import {
   SparklesIcon,
   Spinner,
   SunIcon,
-  TextArea,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
+  TextArea,
   ToolsIcon,
   UserIcon,
   XMarkIcon,
@@ -572,7 +572,9 @@ interface ProfileSectionProps {
 
 function ProfileSection({ owner }: ProfileSectionProps) {
   const { profile, isProfileLoading } = usePersonalAgentProfile({ owner });
-  const { updatePersonalAgentProfile } = useUpdatePersonalAgentProfile({ owner });
+  const { updatePersonalAgentProfile } = useUpdatePersonalAgentProfile({
+    owner,
+  });
   const [localProfile, setLocalProfile] = useState(profile);
   const [isSaving, setIsSaving] = useState(false);
 

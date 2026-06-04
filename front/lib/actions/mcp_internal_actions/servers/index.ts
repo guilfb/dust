@@ -6,7 +6,6 @@ import {
   isServerSideMCPServerConfiguration,
 } from "@app/lib/actions/types/guards";
 import { default as agentMemoryServer } from "@app/lib/api/actions/servers/agent_memory";
-import { default as personalAgentProfileServer } from "@app/lib/api/actions/servers/personal_agent_profile";
 import { default as agentRouterServer } from "@app/lib/api/actions/servers/agent_router";
 import { default as agentSidekickAgentStateServer } from "@app/lib/api/actions/servers/agent_sidekick_agent_state";
 import { default as agentSidekickContextServer } from "@app/lib/api/actions/servers/agent_sidekick_context";
@@ -48,6 +47,7 @@ import { default as notionServer } from "@app/lib/api/actions/servers/notion";
 import { default as openaiUsageServer } from "@app/lib/api/actions/servers/openai_usage";
 import { default as outlookCalendarServer } from "@app/lib/api/actions/servers/outlook/calendar_server";
 import { default as outlookMailServer } from "@app/lib/api/actions/servers/outlook/mail_server";
+import { default as personalAgentProfileServer } from "@app/lib/api/actions/servers/personal_agent_profile";
 import { default as planModeServer } from "@app/lib/api/actions/servers/plan_mode";
 import { default as podManagerServer } from "@app/lib/api/actions/servers/pod_manager";
 import { default as podTasksServer } from "@app/lib/api/actions/servers/pod_tasks";

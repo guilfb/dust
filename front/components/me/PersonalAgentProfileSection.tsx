@@ -1,5 +1,8 @@
 import { PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS } from "@app/lib/api/assistant/personal_agent_profile";
-import { usePersonalAgentProfile, useUpdatePersonalAgentProfile } from "@app/lib/swr/user";
+import {
+  usePersonalAgentProfile,
+  useUpdatePersonalAgentProfile,
+} from "@app/lib/swr/user";
 import type { WorkspaceType } from "@app/types/user";
 import { Button, Spinner, TextArea } from "@dust-tt/sparkle";
 import { useEffect, useState } from "react";
@@ -8,9 +11,13 @@ interface PersonalAgentProfileSectionProps {
   owner: WorkspaceType;
 }
 
-export function PersonalAgentProfileSection({ owner }: PersonalAgentProfileSectionProps) {
+export function PersonalAgentProfileSection({
+  owner,
+}: PersonalAgentProfileSectionProps) {
   const { profile, isProfileLoading } = usePersonalAgentProfile({ owner });
-  const { updatePersonalAgentProfile } = useUpdatePersonalAgentProfile({ owner });
+  const { updatePersonalAgentProfile } = useUpdatePersonalAgentProfile({
+    owner,
+  });
   const [localProfile, setLocalProfile] = useState(profile);
   const [isSaving, setIsSaving] = useState(false);
 

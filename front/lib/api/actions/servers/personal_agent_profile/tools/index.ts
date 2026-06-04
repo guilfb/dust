@@ -7,8 +7,8 @@ import {
   UPDATE_PERSONAL_AGENT_PROFILE_TOOL_NAME,
 } from "@app/lib/api/actions/servers/personal_agent_profile/metadata";
 import {
-  PERSONAL_AGENT_PROFILE_METADATA_KEY,
   PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS,
+  PERSONAL_AGENT_PROFILE_METADATA_KEY,
 } from "@app/lib/api/assistant/personal_agent_profile";
 import { Err, Ok } from "@app/types/shared/result";
 
@@ -53,7 +53,11 @@ const handlers: ToolHandlers<typeof PERSONAL_AGENT_PROFILE_TOOLS_METADATA> = {
 
     const owner = auth.getNonNullableWorkspace();
     const capped = content.slice(0, PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
-    await user.setMetadata(PERSONAL_AGENT_PROFILE_METADATA_KEY, capped, owner.id);
+    await user.setMetadata(
+      PERSONAL_AGENT_PROFILE_METADATA_KEY,
+      capped,
+      owner.id
+    );
 
     return new Ok([
       {
@@ -64,4 +68,7 @@ const handlers: ToolHandlers<typeof PERSONAL_AGENT_PROFILE_TOOLS_METADATA> = {
   },
 };
 
-export const TOOLS = buildTools(PERSONAL_AGENT_PROFILE_TOOLS_METADATA, handlers);
+export const TOOLS = buildTools(
+  PERSONAL_AGENT_PROFILE_TOOLS_METADATA,
+  handlers
+);

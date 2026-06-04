@@ -4,8 +4,8 @@ import {
 } from "@app/lib/api/actions/servers/personal_agent_profile/metadata";
 import { TOOLS } from "@app/lib/api/actions/servers/personal_agent_profile/tools";
 import {
-  PERSONAL_AGENT_PROFILE_METADATA_KEY,
   PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS,
+  PERSONAL_AGENT_PROFILE_METADATA_KEY,
 } from "@app/lib/api/assistant/personal_agent_profile";
 import type { Authenticator as AuthenticatorType } from "@app/lib/auth";
 import { Authenticator } from "@app/lib/auth";
@@ -76,7 +76,9 @@ describe("personal_agent_profile update_personal_agent_profile tool", () => {
       throw new Error("Expected an authenticated user.");
     }
 
-    const longContent = "x".repeat(PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS + 1000);
+    const longContent = "x".repeat(
+      PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS + 1000
+    );
     const result = await getUpdateTool().handler(
       { content: longContent },
       makeExtra(authenticator)
@@ -88,7 +90,9 @@ describe("personal_agent_profile update_personal_agent_profile tool", () => {
       PERSONAL_AGENT_PROFILE_METADATA_KEY,
       workspace.id
     );
-    expect(metadata?.value?.length).toBe(PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS);
+    expect(metadata?.value?.length).toBe(
+      PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS
+    );
   });
 
   it("returns an error when there is no authenticated user", async () => {
@@ -122,7 +126,10 @@ describe("personal_agent_profile retrieve tool", () => {
       workspace.id
     );
 
-    const result = await getRetrieveTool().handler({}, makeExtra(authenticator));
+    const result = await getRetrieveTool().handler(
+      {},
+      makeExtra(authenticator)
+    );
 
     expect(result.isOk()).toBe(true);
     if (result.isOk()) {
@@ -133,7 +140,10 @@ describe("personal_agent_profile retrieve tool", () => {
   it("returns a placeholder when no profile is set", async () => {
     const { authenticator } = await createResourceTest({ role: "admin" });
 
-    const result = await getRetrieveTool().handler({}, makeExtra(authenticator));
+    const result = await getRetrieveTool().handler(
+      {},
+      makeExtra(authenticator)
+    );
 
     expect(result.isOk()).toBe(true);
     if (result.isOk()) {

@@ -26,10 +26,10 @@ import {
   buildUserContext,
   buildWorkspaceContext,
 } from "@app/lib/api/assistant/global_agents/sidekick_context";
-import { buildPersonalAgentProfileContext } from "@app/lib/api/assistant/personal_agent_profile";
 import { getJITServers } from "@app/lib/api/assistant/jit_actions";
 import { listAttachments } from "@app/lib/api/assistant/jit_utils";
 import { getCompletionDuration } from "@app/lib/api/assistant/messages";
+import { buildPersonalAgentProfileContext } from "@app/lib/api/assistant/personal_agent_profile";
 import { getSkillServers } from "@app/lib/api/assistant/skill_actions";
 import { renderEquippedSkillsUserMessage } from "@app/lib/api/assistant/skills_rendering";
 import {
@@ -369,7 +369,8 @@ export async function runModel(
 
   let personalAgentProfileContext: string | undefined;
   if (auth.user()) {
-    personalAgentProfileContext = (await buildPersonalAgentProfileContext(auth)) ?? undefined;
+    personalAgentProfileContext =
+      (await buildPersonalAgentProfileContext(auth)) ?? undefined;
   }
 
   let workspaceContext: string | undefined;

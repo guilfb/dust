@@ -5,9 +5,11 @@ import type { JSONSchema7 as JSONSchema } from "json-schema";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-export const PERSONAL_AGENT_PROFILE_SERVER_NAME = "personal_agent_profile" as const;
+export const PERSONAL_AGENT_PROFILE_SERVER_NAME =
+  "personal_agent_profile" as const;
 export const RETRIEVE_PERSONAL_AGENT_PROFILE_TOOL_NAME = "retrieve";
-export const UPDATE_PERSONAL_AGENT_PROFILE_TOOL_NAME = "update_personal_agent_profile";
+export const UPDATE_PERSONAL_AGENT_PROFILE_TOOL_NAME =
+  "update_personal_agent_profile";
 
 export const PERSONAL_AGENT_PROFILE_TOOLS_METADATA = createToolsRecord({
   [RETRIEVE_PERSONAL_AGENT_PROFILE_TOOL_NAME]: {
@@ -62,6 +64,9 @@ export const PERSONAL_AGENT_PROFILE_SERVER = {
     displayLabels: t.displayLabels,
   })),
   tools_stakes: Object.fromEntries(
-    Object.values(PERSONAL_AGENT_PROFILE_TOOLS_METADATA).map((t) => [t.name, t.stake])
+    Object.values(PERSONAL_AGENT_PROFILE_TOOLS_METADATA).map((t) => [
+      t.name,
+      t.stake,
+    ])
   ),
 } as const satisfies ServerMetadata;

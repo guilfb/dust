@@ -1,4 +1,8 @@
 import { useSendNotification } from "@app/hooks/useNotification";
+import {
+  PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS,
+  PERSONAL_AGENT_PROFILE_METADATA_KEY,
+} from "@app/lib/api/assistant/personal_agent_profile";
 import { clientFetch } from "@app/lib/egress/client";
 import { nonRedirectingFetcher } from "@app/lib/swr/fetcher";
 import {
@@ -8,10 +12,6 @@ import {
   useSWRWithDefaults,
 } from "@app/lib/swr/swr";
 import type { EmailProviderType } from "@app/lib/utils/email_provider_detection";
-import {
-  PERSONAL_AGENT_PROFILE_METADATA_KEY,
-  PERSONAL_AGENT_PROFILE_MAX_LENGTH_CHARS,
-} from "@app/lib/api/assistant/personal_agent_profile";
 import type { GetUserResponseBody } from "@app/pages/api/user";
 import type { GetUserMetadataResponseBody } from "@app/pages/api/user/metadata/[key]";
 import type { GetUserApprovalsResponseBody } from "@app/pages/api/w/[wId]/me/approvals";
@@ -223,7 +223,11 @@ export function usePersonalAgentProfile({
   };
 }
 
-export function useUpdatePersonalAgentProfile({ owner }: { owner: LightWorkspaceType }) {
+export function useUpdatePersonalAgentProfile({
+  owner,
+}: {
+  owner: LightWorkspaceType;
+}) {
   const sendNotification = useSendNotification();
   const { mutateProfile } = usePersonalAgentProfile({ owner });
 
